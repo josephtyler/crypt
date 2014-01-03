@@ -1,17 +1,34 @@
 #!/usr/bin/python
 
-from Crypto.PublicKey import RSA
-from Crypto import Random
-from optparse import OptionParser
-import os.path
+import imp
 import sys
+import os.path
 
-PUBLIC_DEFAULT = "public.key"
-PRIVATE_DEFAULT = "private.key"
+def module_exists(name):
+	try:
+		imp.find_module(name)
+		return True
+	except ImportError:
+		return False
 
 def err(msg):
 	sys.stderr.write("Crypt Error: %s\n" % msg)
 	quit()
+
+# Check essential packages before running the script
+modules = ["Crypto","optparse"]
+for m in modules:
+	if not module_exists(m):
+		err("Python module %s  not installed. Try pip install %s" % (m, m))
+
+
+from Crypto.PublicKey import RSA
+from Crypto import Random
+from optparse import OptionParser
+
+# Constants needed for this program
+PUBLIC_DEFAULT = "public.key"
+PRIVATE_DEFAULT = "private.key"
 
 # Declare the usage options
 usage = "Usage: \t%prog [-d|-e] [-k key_file] INFILE OUTFILE\n\t%prog [-g]\n"
